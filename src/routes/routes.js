@@ -12,7 +12,7 @@ const entityChangesService = require('../services/entity_changes');
 const csurf = require('csurf');
 const {createPartialContentHandler} = require("express-partial-content");
 const rateLimit = require("express-rate-limit");
-const AbstractEntity = require("../becca/entities/abstract_entity");
+const AbstractBeccaEntity = require("../becca/entities/abstract_becca_entity");
 const NotFoundError = require("../errors/not_found_error");
 const ValidationError = require("../errors/validation_error");
 
@@ -56,6 +56,7 @@ const backendLogRoute = require('./api/backend_log');
 const statsRoute = require('./api/stats');
 const fontsRoute = require('./api/fonts');
 const etapiTokensApiRoutes = require('./api/etapi_tokens');
+const otherRoute = require('./api/other');
 const shareRoutes = require('../share/routes');
 const etapiAuthRoutes = require('../etapi/auth');
 const etapiAppInfoRoutes = require('../etapi/app_info');
@@ -118,7 +119,7 @@ function register(app) {
     apiRoute(GET, '/api/autocomplete', autocompleteApiRoute.getAutocomplete);
 
     apiRoute(GET, '/api/notes/:noteId', notesApiRoute.getNote);
-    apiRoute(PUT, '/api/notes/:noteId/content', notesApiRoute.updateNoteContent);
+    apiRoute(PUT, '/api/notes/:noteId/data', notesApiRoute.updateNoteData);
     apiRoute(DELETE, '/api/notes/:noteId', notesApiRoute.deleteNote);
     apiRoute(PUT, '/api/notes/:noteId/undelete', notesApiRoute.undeleteNote);
     apiRoute(POST, '/api/notes/:noteId/revision', notesApiRoute.forceSaveNoteRevision);
@@ -298,6 +299,7 @@ function register(app) {
     apiRoute(POST, '/api/delete-notes-preview', notesApiRoute.getDeleteNotesPreview);
 
     route(GET, '/api/fonts', [auth.checkApiAuthOrElectron], fontsRoute.getFontCss);
+    apiRoute(GET, '/api/other/icon-usage', otherRoute.getIconUsage);
 
     apiRoute(GET, '/api/etapi-tokens', etapiTokensApiRoutes.getTokens);
     apiRoute(POST, '/api/etapi-tokens', etapiTokensApiRoutes.createToken);
@@ -319,22 +321,22 @@ function register(app) {
 
 /** Handling common patterns. If entity is not caught, serialization to JSON will fail */
 function convertEntitiesToPojo(result) {
-    if (result instanceof AbstractEntity) {
+    if (result instanceof AbstractBeccaEntity) {
         result = result.getPojo();
     }
     else if (Array.isArray(result)) {
         for (const idx in result) {
-            if (result[idx] instanceof AbstractEntity) {
+            if (result[idx] instanceof AbstractBeccaEntity) {
                 result[idx] = result[idx].getPojo();
             }
         }
     }
     else {
-        if (result && result.note instanceof AbstractEntity) {
+        if (result && result.note instanceof AbstractBeccaEntity) {
             result.note = result.note.getPojo();
         }
 
-        if (result && result.branch instanceof AbstractEntity) {
+        if (result && result.branch instanceof AbstractBeccaEntity) {
             result.branch = result.branch.getPojo();
         }
     }

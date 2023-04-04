@@ -2,7 +2,7 @@
 
 const sql = require('./sql');
 const log = require('./log');
-const Branch = require('../becca/entities/branch');
+const BBranch = require('../becca/entities/bbranch');
 const entityChangesService = require('./entity_changes');
 const protectedSessionService = require('./protected_session');
 const becca = require('../becca/becca');
@@ -85,7 +85,7 @@ function getExistingBranch(parentNoteId, childNoteId) {
 function checkTreeCycle(parentNoteId, childNoteId) {
     const subtreeNoteIds = [];
 
-    // we'll load the whole sub tree - because the cycle can start in one of the notes in the sub tree
+    // we'll load the whole subtree - because the cycle can start in one of the notes in the subtree
     loadSubtreeNoteIds(childNoteId, subtreeNoteIds);
 
     function checkTreeCycleInner(parentNoteId) {
@@ -123,9 +123,14 @@ function loadSubtreeNoteIds(parentNoteId, subtreeNoteIds) {
     }
 }
 
-function sortNotes(parentNoteId, customSortBy = 'title', reverse = false, foldersFirst = false) {
+function sortNotes(parentNoteId, customSortBy = 'title', reverse = false, foldersFirst = false, sortNatural = false, sortLocale) {
     if (!customSortBy) {
         customSortBy = 'title';
+    }
+
+    if (!sortLocale) {
+        // sortLocale can not be empty string or null value, default value must be set to undefined.
+        sortLocale = undefined;
     }
 
     sql.transactional(() => {
@@ -153,7 +158,14 @@ function sortNotes(parentNoteId, customSortBy = 'title', reverse = false, folder
             }
 
             function compare(a, b) {
-                return b === null || b === undefined || a < b ? -1 : 1;
+                if (!sortNatural){
+                    // alphabetical sort
+                    return b === null || b === undefined || a < b ? -1 : 1;
+                } else {
+                    // natural sort
+                    return a.localeCompare(b, sortLocale, {numeric: true, sensitivity: 'base'});
+                }
+
             }
 
             const topAEl = fetchValue(a, 'top');
@@ -224,12 +236,15 @@ function sortNotesIfNeeded(parentNoteId) {
     const sortReversed = parentNote.getLabelValue('sortDirection')?.toLowerCase() === "desc";
     const sortFoldersFirstLabel = parentNote.getLabel('sortFoldersFirst');
     const sortFoldersFirst = sortFoldersFirstLabel && sortFoldersFirstLabel.value.toLowerCase() !== "false";
+    const sortNaturalLabel = parentNote.getLabel('sortNatural');
+    const sortNatural = sortNaturalLabel && sortNaturalLabel.value.toLowerCase() !== "false";
+    const sortLocale = parentNote.getLabelValue('sortLocale');
 
-    sortNotes(parentNoteId, sortedLabel.value, sortReversed, sortFoldersFirst);
+    sortNotes(parentNoteId, sortedLabel.value, sortReversed, sortFoldersFirst, sortNatural, sortLocale);
 }
 
 /**
- * @deprecated - this will be removed in the future
+ * @deprecated this will be removed in the future
  */
 function setNoteToParent(noteId, prefix, parentNoteId) {
     const parentNote = becca.getNote(parentNoteId);
@@ -270,7 +285,7 @@ function setNoteToParent(noteId, prefix, parentNoteId) {
             branch.save();
         }
         else {
-            new Branch({
+            new BBranch({
                 noteId: noteId,
                 parentNoteId: parentNoteId,
                 prefix: prefix

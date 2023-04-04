@@ -783,7 +783,7 @@ body {
 ::-webkit-scrollbar-thumb {
     border-radius: 3px;
     border: 1px solid var(--scrollbar-border-color);
-    background-color: var(--main-background-color);
+    background-color: var(--active-item-background-color);
 }
 
 ::-webkit-scrollbar-corner {
@@ -989,4 +989,10 @@ button.close:hover {
 
 textarea {
     cursor: auto;
+}
+
+.table thead th,
+.table td, .table th {
+    /* Fix center vertical alignment of table cells */
+    vertical-align: middle;
 }

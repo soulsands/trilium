@@ -1,17 +1,14 @@
 import NoteContextAwareWidget from "./note_context_aware_widget.js";
-import treeService from "../services/tree.js";
-import linkService from "../services/link.js";
-import hoistedNoteService from "../services/hoisted_note.js";
 import server from "../services/server.js";
-import toastService from "../services/toast.js";
 
 const TPL = `
 <div class="sql-table-schemas-widget">
     <style>
     .sql-table-schemas-widget {
         padding: 12px;
+        padding-right: 10%;
     }
-    
+
     .sql-table-schemas button {
         padding: 0.25rem 0.4rem;
         font-size: 0.875rem;
@@ -21,21 +18,21 @@ const TPL = `
         background: var(--button-background-color);
         color: var(--button-text-color);
     }
-    
+
     .sql-console-result-container {
-        width: 100%; 
-        font-size: smaller; 
+        width: 100%;
+        font-size: smaller;
         margin-top: 10px;
         flex-grow: 1;
         overflow: auto;
         min-height: 0;
     }
-    
+
     .table-schema td {
         padding: 5px;
     }
     </style>
-    
+
     Tables:
     <span class="sql-table-schemas"></span>
 </div>`;

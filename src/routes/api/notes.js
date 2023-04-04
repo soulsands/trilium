@@ -53,11 +53,11 @@ function createNote(req) {
     };
 }
 
-function updateNoteContent(req) {
+function updateNoteData(req) {
     const {content} = req.body;
     const {noteId} = req.params;
 
-    return noteService.updateNoteContent(noteId, content);
+    return noteService.updateNoteData(noteId, content);
 }
 
 function deleteNote(req) {
@@ -94,13 +94,13 @@ function undeleteNote(req) {
 
 function sortChildNotes(req) {
     const noteId = req.params.noteId;
-    const {sortBy, sortDirection, foldersFirst} = req.body;
+    const {sortBy, sortDirection, foldersFirst, sortNatural, sortLocale} = req.body;
 
-    log.info(`Sorting '${noteId}' children with ${sortBy} ${sortDirection}, foldersFirst=${foldersFirst}`);
+    log.info(`Sorting '${noteId}' children with ${sortBy} ${sortDirection}, foldersFirst=${foldersFirst}, sortNatural=${sortNatural}, sortLocale=${sortLocale}`);
 
     const reverse = sortDirection === 'desc';
 
-    treeService.sortNotes(noteId, sortBy, reverse, foldersFirst);
+    treeService.sortNotes(noteId, sortBy, reverse, foldersFirst, sortNatural, sortLocale);
 }
 
 function protectNote(req) {
@@ -327,7 +327,7 @@ function forceSaveNoteRevision(req) {
 
 module.exports = {
     getNote,
-    updateNoteContent,
+    updateNoteData,
     deleteNote,
     undeleteNote,
     createNote,
