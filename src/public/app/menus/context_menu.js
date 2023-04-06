@@ -24,7 +24,7 @@ class ContextMenu {
 
     positionMenu() {
         // code below tries to detect when dropdown would overflow from page
-        // in such case we'll position it above click coordinates so it will fit into client
+        // in such case we'll position it above click coordinates, so it will fit into client
 
         const CONTEXT_MENU_PADDING = 5; // How many pixels to pad context menu from edge of screen
         const CONTEXT_MENU_OFFSET = 0; // How many pixels to offset context menu by relative to cursor, see #3157
@@ -99,10 +99,15 @@ class ContextMenu {
                 const $item = $("<li>")
                     .addClass("dropdown-item")
                     .append($link)
+                    .on('contextmenu', e => false)
                     // important to use mousedown instead of click since the former does not change focus
                     // (especially important for focused text for spell check)
                     .on('mousedown', e => {
                         e.stopPropagation();
+
+                        if (e.which !== 1) { // only left click triggers menu items
+                            return false;
+                        }
 
                         this.hide();
 

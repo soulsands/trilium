@@ -3,7 +3,7 @@ const scriptService = require('./script');
 const treeService = require('./tree');
 const noteService = require('./notes');
 const becca = require('../becca/becca');
-const Attribute = require('../becca/entities/attribute');
+const BAttribute = require('../becca/entities/battribute');
 const hiddenSubtreeService = require("./hidden_subtree");
 const oneTimeTimer = require("./one_time_timer");
 
@@ -46,7 +46,7 @@ eventService.subscribe([ eventService.ENTITY_CHANGED, eventService.ENTITY_DELETE
     if (entityName === 'attributes') {
         runAttachedRelations(entity.getNote(), 'runOnAttributeChange', entity);
 
-        if (entity.type === 'label' && ['sorted', 'sortDirection', 'sortFoldersFirst'].includes(entity.name)) {
+        if (entity.type === 'label' && ['sorted', 'sortDirection', 'sortFoldersFirst', 'sortNatural', 'sortLocale'].includes(entity.name)) {
             handleSortedAttribute(entity);
         } else if (entity.type === 'label') {
             handleMaybeSortingLabel(entity);
@@ -101,7 +101,7 @@ eventService.subscribe(eventService.ENTITY_CREATED, ({ entityName, entity }) => 
                 noteService.duplicateSubtreeWithoutRoot(templateNote.noteId, note.noteId);
             }
         }
-        else if (entity.type === 'label' && ['sorted', 'sortDirection', 'sortFoldersFirst'].includes(entity.name)) {
+        else if (entity.type === 'label' && ['sorted', 'sortDirection', 'sortFoldersFirst', 'sortNatural', 'sortLocale'].includes(entity.name)) {
             handleSortedAttribute(entity);
         }
         else if (entity.type === 'label') {
@@ -179,7 +179,7 @@ eventService.subscribe(eventService.ENTITY_CHANGED, ({ entityName, entity }) => 
             .some(attr => attr.value === note.noteId);
 
         if (!hasInverseAttribute) {
-            new Attribute({
+            new BAttribute({
                 noteId: targetNote.noteId,
                 type: 'relation',
                 name: definition.inverseRelation,
