@@ -32,7 +32,7 @@ Ukraine is currently suffering from Russian aggression, please consider donating
 * [夜间主题](https://github.com/zadam/trilium/wiki/Themes)
 * [Evernote](https://github.com/zadam/trilium/wiki/Evernote-import) 和 [Markdown 导入导出](https://github.com/zadam/trilium/wiki/Markdown)功能
 * 使用[网页剪藏](https://github.com/zadam/trilium/wiki/Web-clipper)轻松保存互联网上的内容
-
+* [苹果快捷指令](https://github.com/soulsands/trilium-ios-shortcut) 方便苹果设备发消息到trilium
 ## 构建
 
 Trilium 可以用作桌面应用程序（Linux 和 Windows）或服务器（Linux）上托管的 Web 应用程序。虽然有 macOS 版本的桌面应用程序，但它[不受支持](https://github.com/zadam/trilium/wiki/FAQ#mac-os-support)。
