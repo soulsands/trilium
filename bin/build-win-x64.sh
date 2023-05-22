@@ -37,4 +37,4 @@ VERSION=`jq -r ".version" package.json`
 
 cd dist
 
-zip -r9 trilium-windows-x64-${VERSION}.zip trilium-windows-x64
+# zip -r9 trilium-windows-x64-${VERSION}.zip trilium-windows-x64

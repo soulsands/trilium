@@ -5,7 +5,7 @@ if [[ $# -eq 0 ]] ; then
     exit 1
 fi
 
-n exec 16.19.1 npm run webpack
+npm run webpack
 
 DIR=$1
 
@@ -20,14 +20,17 @@ cp -r src $DIR/
 cp -r db $DIR/
 cp -r package.json $DIR/
 cp -r package-lock.json $DIR/
+cp -r yarn.lock $DIR/
 cp -r README.md $DIR/
 cp -r LICENSE $DIR/
 cp -r config-sample.ini $DIR/
 cp -r electron.js $DIR/
-cp webpack-* $DIR/
+cp webpack.config.js $DIR/
 
-# run in subshell (so we return to original dir)
-(cd $DIR && n exec 16.19.1 npm install --only=prod)
+oldpwd=$(pwd);
+cd $DIR 
+yarn --only=prod
+cd $oldpwd
 
 # cleanup of useless files in dependencies
 rm -r $DIR/node_modules/image-q/demo
