@@ -261,7 +261,7 @@ class FNote {
 
         if (!(this.noteId in noteAttributeCache.attributes)) {
             const newPath = [...path, this.noteId];
-            const attrArrs = [ this.getOwnedAttributes() ];
+            const attrArrs = [this.getOwnedAttributes()];
 
             // inheritable attrs on root are typically not intended to be applied to hidden subtree #3537
             if (this.noteId !== 'root' && this.noteId !== '_hidden') {
@@ -309,25 +309,47 @@ class FNote {
      *
      * @returns {string[][]} - array of notePaths (each represented by array of noteIds constituting the particular note path)
      */
-    getAllNotePaths() {
+    getAllNotePaths(encounteredNoteIds = null) {
         if (this.noteId === 'root') {
             return [['root']];
         }
 
+        if (!encounteredNoteIds) {
+            encounteredNoteIds = new Set();
+        }
+
+        encounteredNoteIds.add(this.noteId);
+
         const parentNotes = this.getParentNotes();
-        let notePaths = [];
+        let paths;
 
-        if (parentNotes.length === 1) { // optimization for most common case
-            notePaths = parentNotes[0].getAllNotePaths();
-        } else {
-            notePaths = parentNotes.flatMap(parentNote => parentNote.getAllNotePaths());
+        if (parentNotes.length === 1) { // optimization for the most common case
+            if (encounteredNoteIds.has(parentNotes[0].noteId)) {
+                return [];
+            }
+            else {
+                paths = parentNotes[0].getAllNotePaths(encounteredNoteIds);
+            }
+        }
+        else {
+            paths = [];
+
+            for (const parentNote of parentNotes) {
+                if (encounteredNoteIds.has(parentNote.noteId)) {
+                    continue;
+                }
+
+                const newSet = new Set(encounteredNoteIds);
+
+                paths.push(...parentNote.getAllNotePaths(newSet));
+            }
         }
 
-        for (const notePath of notePaths) {
-            notePath.push(this.noteId);
+        for (const path of paths) {
+            path.push(this.noteId);
         }
 
-        return notePaths;
+        return paths;
     }
 
     /**
@@ -609,13 +631,13 @@ class FNote {
      * @param {string} name - label name
      * @returns {boolean} true if label exists (excluding inherited)
      */
-    hasOwnedLabel(name) { return this.hasOwnedAttribute(LABEL, name); }
+    hasOwnedLabel(name) {return this.hasOwnedAttribute(LABEL, name);}
 
     /**
      * @param {string} name - label name
      * @returns {boolean} true if label exists (including inherited)
      */
-    hasLabel(name) { return this.hasAttribute(LABEL, name); }
+    hasLabel(name) {return this.hasAttribute(LABEL, name);}
 
     /**
      * @param {string} name - label name
@@ -635,61 +657,61 @@ class FNote {
      * @param {string} name - relation name
      * @returns {boolean} true if relation exists (excluding inherited)
      */
-    hasOwnedRelation(name) { return this.hasOwnedAttribute(RELATION, name); }
+    hasOwnedRelation(name) {return this.hasOwnedAttribute(RELATION, name);}
 
     /**
      * @param {string} name - relation name
      * @returns {boolean} true if relation exists (including inherited)
      */
-    hasRelation(name) { return this.hasAttribute(RELATION, name); }
+    hasRelation(name) {return this.hasAttribute(RELATION, name);}
 
     /**
      * @param {string} name - label name
      * @returns {FAttribute} label if it exists, null otherwise
      */
-    getOwnedLabel(name) { return this.getOwnedAttribute(LABEL, name); }
+    getOwnedLabel(name) {return this.getOwnedAttribute(LABEL, name);}
 
     /**
      * @param {string} name - label name
      * @returns {FAttribute} label if it exists, null otherwise
      */
-    getLabel(name) { return this.getAttribute(LABEL, name); }
+    getLabel(name) {return this.getAttribute(LABEL, name);}
 
     /**
      * @param {string} name - relation name
      * @returns {FAttribute} relation if it exists, null otherwise
      */
-    getOwnedRelation(name) { return this.getOwnedAttribute(RELATION, name); }
+    getOwnedRelation(name) {return this.getOwnedAttribute(RELATION, name);}
 
     /**
      * @param {string} name - relation name
      * @returns {FAttribute} relation if it exists, null otherwise
      */
-    getRelation(name) { return this.getAttribute(RELATION, name); }
+    getRelation(name) {return this.getAttribute(RELATION, name);}
 
     /**
      * @param {string} name - label name
      * @returns {string} label value if label exists, null otherwise
      */
-    getOwnedLabelValue(name) { return this.getOwnedAttributeValue(LABEL, name); }
+    getOwnedLabelValue(name) {return this.getOwnedAttributeValue(LABEL, name);}
 
     /**
      * @param {string} name - label name
      * @returns {string} label value if label exists, null otherwise
      */
-    getLabelValue(name) { return this.getAttributeValue(LABEL, name); }
+    getLabelValue(name) {return this.getAttributeValue(LABEL, name);}
 
     /**
      * @param {string} name - relation name
      * @returns {string} relation value if relation exists, null otherwise
      */
-    getOwnedRelationValue(name) { return this.getOwnedAttributeValue(RELATION, name); }
+    getOwnedRelationValue(name) {return this.getOwnedAttributeValue(RELATION, name);}
 
     /**
      * @param {string} name - relation name
      * @returns {string} relation value if relation exists, null otherwise
      */
-    getRelationValue(name) { return this.getAttributeValue(RELATION, name); }
+    getRelationValue(name) {return this.getAttributeValue(RELATION, name);}
 
     /**
      * @param {string} name
@@ -920,7 +942,7 @@ class FNote {
     }
 
     isContentAvailable() {
-        return !this.isProtected || protectedSessionHolder.isProtectedSessionAvailable()
+        return !this.isProtected || protectedSessionHolder.isProtectedSessionAvailable();
     }
 
     isLaunchBarConfig() {
