@@ -91,7 +91,7 @@ export default class TocWidget extends RightPanelWidget {
         let $toc = "", headingCount = 0;
         // Check for type text unconditionally in case alwaysShowWidget is set
         if (this.note.type === 'text') {
-            const { content } = await note.getNoteComplement();
+            const {content} = await note.getNoteComplement();
             ({$toc, headingCount} = await this.getToc(content));
         }
 
@@ -177,7 +177,7 @@ export default class TocWidget extends RightPanelWidget {
             const headingElement = $container.find(":header")[headingIndex];
 
             if (headingElement != null) {
-                headingElement.scrollIntoView({ behavior: "smooth" });
+                headingElement.scrollIntoView();
             }
         } else {
             const textEditor = await this.noteContext.getTextEditor();
@@ -193,9 +193,7 @@ export default class TocWidget extends RightPanelWidget {
             // navigate (note that the TOC rendering and other TOC
             // entries' navigation could be wrong too)
             if (headingNode != null) {
-                $(textEditor.editing.view.domRoots.values().next().value).find(':header')[headingIndex].scrollIntoView({
-                    behavior: 'smooth'
-                });
+                $(textEditor.editing.view.domRoots.values().next().value).find(':header')[headingIndex].scrollIntoView();
             }
         }
     }
